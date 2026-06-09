@@ -19,5 +19,8 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
 
+      - name: Instalar navegadores
+        run: playwright install chromium
+
       - name: Ejecutar script
         run: python latam_tracker.py
