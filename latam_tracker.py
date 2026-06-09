@@ -1,32 +1,18 @@
-import requests
-import json
+from playwright.sync_api import sync_playwright
 
-url = "https://www.latamairlines.com/bff/air-offers/v2/offers/search"
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
 
-params = {
-    "adult": 1,
-    "child": 0,
-    "infant": 0,
-    "locale": "es-co",
-    "origin": "SCL",
-    "destination": "ZCO",
-    "inFrom": "2026-08-15",
-    "outFrom": "2026-08-12",
-    "cabinType": "Economy",
-    "sort": "RECOMMENDED",
-    "redemption": "false"
-}
+    page = browser.new_page()
 
-headers = {
-    "accept": "application/json"
-}
+    page.goto(
+        "https://www.latamairlines.com/co/es/ofertas-vuelos/?origin=SCL&outbound=2026-08-12&destination=ZCO&inbound=2026-08-15&adt=1&chd=0&inf=0&trip=RT&cabin=Economy&redemption=false&sort=RECOMMENDED",
+        wait_until="networkidle",
+        timeout=120000,
+    )
 
-r = requests.get(url, params=params, headers=headers, timeout=30)
+    print("TITLE:", page.title())
 
-print("STATUS:", r.status_code)
+    print("URL:", page.url)
 
-try:
-    data = r.json()
-    print(json.dumps(data, indent=2)[:5000])
-except Exception:
-    print(r.text[:5000])
+    browser.close()
